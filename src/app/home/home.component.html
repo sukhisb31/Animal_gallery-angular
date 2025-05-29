@@ -1,0 +1,51 @@
+<div
+  class="home-container"
+  (scroll)="onScroll($event)"
+  style="height: 100vh; overflow-y: auto"
+>
+  <h2 class="title">Animal Gallery</h2>
+  <div class="card-grid">
+    <mat-card class="card" *ngFor="let item of displayItems">
+      <img mat-card-image [src]="item.img" [alt]="item.name" class="card-img" />
+      <mat-icon class="delete" (click)="deleteItem(item)"
+        >delete_outline</mat-icon
+      >
+      <mat-icon class="edit" (click)="editItem(item)">create</mat-icon>
+      <mat-card-title>{{ item.name }}</mat-card-title>
+      <mat-card-content>
+        <div *ngIf="!item.isEditing">
+          <p>{{ item.desc }}</p>
+        </div>
+        <div *ngIf="item.isEditing">
+          <textarea matInput #descInput style="width: 21rem; height: 5rem"
+            >{{ item.desc }} </textarea
+          >
+          <div class="button-container" >
+          <button mat-raised-button color="primary" (click)="resetChanges()" style="margin-inline: 70px;" type="button">
+            Reset
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="savedItem(item, descInput.value)"
+            type="button"
+          >
+            Save
+          </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div
+    *ngIf="loading && currentIndex < allItems.length"
+    class="loader-container"
+  >
+    <div class="loader">
+      <mat-spinner diameter="70"></mat-spinner>
+      <p style="margin-left: 20px; font-size: x-large; font-weight: 500">
+        Loading...
+      </p>
+    </div>
+  </div>
+</div>
