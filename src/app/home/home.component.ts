@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { itemData } from '../product/itemData';
 import { DialogModelComponent } from '../dialog-model/dialog-model.component';
 import { MatDialog } from '@angular/material/dialog';
+import { UpadateitemComponent } from '../upadateitem/upadateitem.component';
 
 @Component({
   selector: 'app-home',
@@ -21,9 +22,9 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.allItems = itemData;
     const savedItems = localStorage.getItem('savedItems');
-    if(savedItems){
+    if (savedItems) {
       this.allItems = JSON.parse(savedItems);
-    }else{
+    } else {
       this.allItems = itemData;
     }
 
@@ -34,11 +35,26 @@ export class HomeComponent implements OnInit {
   }
 
   //edit item
-  editItem(item: ProductItem): void{
-    item.isEditing = true;
+  editItem(item: ProductItem): void {
+    const dialogRef = this.dialog.open(UpadateitemComponent, {
+      data: { ...item, isEditing: true }
+    })
+
+    document.body.classList.add('blur-background');
+    dialogRef.afterClosed().subscribe((updated: ProductItem) => {
+      if (updated) {
+        const itemUpdate = this.allItems.findIndex(itemIndex => itemIndex.id === updated.id);
+        if (itemUpdate !== -1) {
+          this.savedItem(this.allItems[itemUpdate], updated.name, updated.desc, updated.img)
+        }
+      }
+    })
   }
-  savedItem(item: ProductItem ,desc: string):void{
-    item.desc = desc;
+
+  savedItem(item: ProductItem, desc: string, name: string, img: string): void {
+    item.desc = desc.trim();
+    item.name = name.trim();
+    item.img = img.trim();
     item.isEditing = false
     localStorage.setItem('savedItems', JSON.stringify(this.allItems));
   }
@@ -46,25 +62,25 @@ export class HomeComponent implements OnInit {
 
   // reset all changes
   // delete item
-  deleteItem( item : ProductItem): void {
-    const dialogRef = this.dialog.open(DialogModelComponent,{
+  deleteItem(item: ProductItem): void {
+    const dialogRef = this.dialog.open(DialogModelComponent, {
       // data: item,
       data: `Are you sure you want to delete ${item.name}?`
     });
 
     document.body.classList.add('blur-background');
     dialogRef.afterClosed().subscribe(result => {
-       document.body.classList.remove('blur-background');
-      if(result){
+      document.body.classList.remove('blur-background');
+      if (result) {
 
         this.allItems = this.allItems.filter(data => data.id !== item.id);
         this.displayItems = this.displayItems.filter(data => data.id !== item.id);
-        localStorage.setItem('savedItems',JSON.stringify(this.allItems));
+        localStorage.setItem('savedItems', JSON.stringify(this.allItems));
 
       }
     })
   }
-  resetChanges(): void{
+  resetChanges(): void {
     localStorage.removeItem('savedItems');
     this.allItems = itemData;
     this.displayItems = [];

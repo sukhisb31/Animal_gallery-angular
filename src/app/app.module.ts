@@ -10,12 +10,17 @@ import {MatIconModule} from '@angular/material/icon'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogModelComponent } from './dialog-model/dialog-model.component';
+import { UpadateitemComponent } from './upadateitem/upadateitem.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    DialogModelComponent
+    DialogModelComponent,
+    UpadateitemComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -26,7 +31,8 @@ import { DialogModelComponent } from './dialog-model/dialog-model.component';
     MatProgressSpinnerModule,
     MatIconModule,
     MatDialogModule,
-
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
