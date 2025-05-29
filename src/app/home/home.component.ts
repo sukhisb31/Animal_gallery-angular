@@ -1,6 +1,8 @@
 import { ProductItem } from './../product/item.model';
 import { Component, OnInit } from '@angular/core';
 import { itemData } from '../product/itemData';
+import { DialogModelComponent } from '../dialog-model/dialog-model.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +14,8 @@ export class HomeComponent implements OnInit {
   displayItems: ProductItem[] = [];
   currentIndex = 0;
   loading = false;
-  constructor() {
+  constructor(private dialog: MatDialog) {
+
   }
 
   ngOnInit(): void {
@@ -44,9 +47,22 @@ export class HomeComponent implements OnInit {
   // reset all changes
   // delete item
   deleteItem( item : ProductItem): void {
-    this.allItems = this.allItems.filter(data => data.id !== item.id);
-    this.displayItems = this.displayItems.filter(data => data.id !== item.id);
-    localStorage.setItem('savedItems',JSON.stringify(this.allItems));
+    const dialogRef = this.dialog.open(DialogModelComponent,{
+      // data: item,
+      data: `Are you sure you want to delete ${item.name}?`
+    });
+
+    document.body.classList.add('blur-background');
+    dialogRef.afterClosed().subscribe(result => {
+       document.body.classList.remove('blur-background');
+      if(result){
+
+        this.allItems = this.allItems.filter(data => data.id !== item.id);
+        this.displayItems = this.displayItems.filter(data => data.id !== item.id);
+        localStorage.setItem('savedItems',JSON.stringify(this.allItems));
+
+      }
+    })
   }
   resetChanges(): void{
     localStorage.removeItem('savedItems');
